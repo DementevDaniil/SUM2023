@@ -339,8 +339,7 @@ export function initGL() {
 
   let pr = new prim(gl, gl.TRIANGLES, tetrVertexPositions, tetrVertexIndices, "default", "")
 
-  let cow = new prim(gl, gl.TRIANGLES, [], [], "default", "./res/models/cow.obj")
-  console.log(cow)
+  
   // const posLoc = gl.getAttribLocation(program, "in_pos");
 
   // const posBuf = gl.createBuffer();
@@ -354,20 +353,23 @@ export function initGL() {
   // const loc = gl.getUniformLocation(program, "time");
   // gl.uniform1f(loc, timeFromStart / 1000.0);
   // gl.drawArrays(gl.TRIANGLE_STRIP, 0, 5);
-  const render = () => {
-    gl.clearColor(0.55, 0.14, 0.214, 1);
-    gl.clear(gl.COLOR_BUFFER_BIT);
-    if (pr.program != null) {
-      const timeFromStart = Date.now() - start;
-      const loc = gl.getUniformLocation(pr.program, "time");
-
-      let world = new mat4()
-      world.scale(0.5).matrRotate(timeFromStart / 500.0, new vec3(0, 1, 0)).matrRotate(timeFromStart / 200.0, new vec3(1, 0, 0))
-
-      pr.draw(globalCamera, world)
-      cow.draw(globalCamera, world)
-    }
-    window.requestAnimationFrame(render);
-  }
-  render();
+  new prim().loadObj("cow.obj").then((res) => {
+        const render = () => {
+            let cow = new prim(res)
+            gl.clearColor(0.55, 0.14, 0.214, 1);
+            gl.clear(gl.COLOR_BUFFER_BIT);
+            if (pr.program != null) {
+                const timeFromStart = Date.now() - start;
+                const loc = gl.getUniformLocation(pr.program, "time");
+                
+                let world = new mat4()
+                world.scale(0.5).matrRotate(timeFromStart / 500.0, new vec3(0, 1, 0)).matrRotate(timeFromStart / 200.0, new vec3(1, 0, 0))
+                
+                pr.draw(globalCamera, world)
+                cow.draw(globalCamera, world)
+            }
+            window.requestAnimationFrame(render);
+        }
+        render();
+    })
 }
